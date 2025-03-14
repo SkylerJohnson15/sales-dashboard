@@ -1,30 +1,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Load the dataset
+# Load and clean the dataset
 df = pd.read_csv("train.csv")
-print(df.head())
-print(df.info())
-
-# Handle missing values
 df = df.dropna(subset=["Sales", "Category"])
 df["Order Date"] = pd.to_datetime(df["Order Date"], format="%d/%m/%Y")
 df["Sales"] = df["Sales"].astype(float)
 df = df[["Order Date", "Category", "Sales", "Region"]]
-print(df.head())
-
-# Total sales by category
-sales_by_category = df.groupby("Category")["Sales"].sum().sort_values(ascending=False)
-print("Sales by Category:\n", sales_by_category)
-
-# Total sales by region
-sales_by_region = df.groupby("Region")["Sales"].sum().sort_values(ascending=False)
-print("Sales by Region:\n", sales_by_region)
-
-# Monthly sales trend
 df["Month"] = df["Order Date"].dt.to_period("M")
+
+# Analyze: Calculate sales metrics
+sales_by_category = df.groupby("Category")["Sales"].sum().sort_values(ascending=False)
+sales_by_region = df.groupby("Region")["Sales"].sum().sort_values(ascending=False)
 monthly_sales = df.groupby("Month")["Sales"].sum()
-print("Monthly Sales (first 5 months):\n", monthly_sales.head())
 
 # Visualize: Sales by Category (Bar Chart)
 plt.figure(figsize=(10, 6))
